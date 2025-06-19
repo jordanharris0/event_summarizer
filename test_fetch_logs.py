@@ -1,12 +1,13 @@
 # script to test the fetch_logs function
 from utils.fetch_logs import fetch_event_logs
 from utils.parse_logs import parse_logs, format_logs_for_gpt
+from utils.summarize_logs import summarize_logs
 
 # example log types and date range
 log_type = 'System'
 start_time = "06/12/2025 8:00:00 AM"
 end_time = "06/13/2025 1:00:00 PM"
-max_events = 10
+max_events = 5
 level = 4  # 1 = Critical, 2 = Error, 3 = Warning, 4 = Information, 5 = Verbose
 provider_name = "Service Control Manager"
 event_ids = [7040, 7045]
@@ -44,3 +45,6 @@ if parsed_logs:
 
 if formatted_logs:
     print("\n\nLogs formatted successfully for GPT input.\n\n")
+
+summary = summarize_logs(formatted_logs)
+print("\nGPT Summary:\n", summary)
