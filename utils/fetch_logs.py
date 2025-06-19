@@ -24,7 +24,7 @@ def fetch_event_logs(log_type: str = "System",
     Returns:
         str: Raw event logs output from PowerShell
     """
-    print("\nFetching logs...")
+    print("\nFetching logs...\n\n")
 
     # building the filter hashtable for PowerShell command
     filter_parts = [f'LogName="{log_type}"']
