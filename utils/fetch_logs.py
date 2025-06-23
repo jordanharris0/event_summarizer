@@ -88,4 +88,4 @@ def fetch_event_logs(log_type: str = "System",
 
     except subprocess.CalledProcessError:
         details = f"log_type={log_type}, start_time={start_time}, end_time={end_time}, level={level}, provider_name={provider_name}, event_ids={event_ids}, max_events={max_events}"
-        return f"\nNo logs found matching the specified criteria:\n\n{details}"
+        return f"\nNo logs found matching the specified criteria:\n\n{details}\n\n"
