@@ -1,0 +1,169 @@
+import json
+import csv
+from datetime import datetime, timedelta
+from pathlib import Path
+
+
+# csv file export function
+def export_to_csv(logs: list[dict], filename: str = None):
+    """
+    Exports parsed logs to a CSV file.
+
+    Args:
+        logs (list[dict]): List of parsed log dictionaries.
+        filename (str): Optional filename for the CSV file. If None, uses timestamp-based name.
+    """
+    if not logs:
+        print("⚠️ No logs to export.")
+        return
+
+    # default filename with timestamp
+    if not filename:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"logs_{timestamp}.csv"
+
+    # creates an export path
+    export_path = Path('exports') / filename
+    export_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # collect all unique fieldnames across all logs
+    all_fieldnames = set()
+    for log in logs:
+        all_fieldnames.update(log.keys())
+    fieldnames = sorted(all_fieldnames)  # sort for consistent order
+
+    try:
+        with open(export_path, mode='w', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(logs)
+        print(f"\n✅ Logs exported successfully to {export_path}")
+    except Exception as e:
+        print(f"❌ Error exporting logs to CSV: {str(e)}")
+
+
+# json file export function
+def export_to_json(logs: list[dict], filename: str = None):
+    """
+    Exports parsed logs to a JSON file.
+
+    Args:
+        logs (list[dict]): List of parsed log dictionaries.
+        filename (str): Optional filename for the JSON file. If None, uses timestamp-based name.
+    """
+    if not logs:
+        print("⚠️ No logs to export.")
+        return
+
+    # default filename with timestamp
+    if not filename:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"logs_{timestamp}.json"
+
+    # creates an export path
+    export_path = Path('exports') / filename
+    export_path.parent.mkdir(parents=True, exist_ok=True)
+
+    try:
+        with open(export_path, 'w', encoding='utf-8') as f:
+            json.dump(logs, f, indent=2, ensure_ascii=False)
+        print(f"\n✅ Logs exported successfully to {export_path}")
+    except Exception as e:
+        print(f"❌ Error exporting logs to JSON: {str(e)}")
+
+
+# txt file export function
+def export_to_txt(logs: list[dict], filename: str = None):
+    """
+    Exports parsed logs to a text file.
+
+    Args:
+        logs (list[dict]): List of parsed log dictionaries.
+        filename (str): Optional filename for the text file. If None, uses timestamp-based name.
+    """
+    if not logs:
+        print("⚠️ No logs to export.")
+        return
+
+    # default filename with timestamp
+    if not filename:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"logs_{timestamp}.txt"
+
+    # creates an export path
+    export_path = Path('exports') / filename
+    export_path.parent.mkdir(parents=True, exist_ok=True)
+
+    try:
+        with open(export_path, 'w', encoding='utf-8') as f:
+            for i, log in enumerate(logs, 1):
+                f.write(f"--- Log Entry #{i} ---\n")
+                for key, value in log.items():
+                    f.write(f"{key}: {value}\n")
+                f.write("\n")  # blank line between logs
+        print(f"\n✅ Logs exported successfully to {export_path}")
+    except Exception as e:
+        print(f"❌ Error exporting logs to TXT: {str(e)}")
+
+
+# .md file export function
+def export_to_md(logs: list[dict], filename: str = None, gpt_summary: str = None):
+    """
+    Exports parsed logs to a Markdown file.
+
+    Args:
+        logs (list[dict]): List of parsed log dictionaries.
+        filename (str): Optional filename for the Markdown file. If None, uses timestamp-based name.
+        gpt_summary (str): Optional GPT-generated summary to include.
+    """
+    if not logs:
+        print("⚠️ No logs to export.")
+        return
+
+    # default filename with timestamp
+    if not filename:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"logs_{timestamp}.md"
+
+    # creates an export path
+    export_path = Path('exports') / filename
+    export_path.parent.mkdir(parents=True, exist_ok=True)
+
+    try:
+        with open(export_path, 'w', encoding='utf-8') as f:
+            f.write("# 📝 Event Logs Report\n\n")
+            f.write(
+                f"**Exported:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+
+            # summary
+            f.write("## 📊 Log Summary\n\n")
+            f.write(f"- **Total Logs**: {len(logs)}\n")
+
+            # optional: find range and providers
+            times = [log.get("TimeCreated")
+                     for log in logs if "TimeCreated" in log]
+            providers = {log.get("ProviderName")
+                         for log in logs if "ProviderName" in log}
+            if times:
+                f.write(f"- **Time Range**: {times[0]} ➡️ {times[-1]}\n")
+            if providers:
+                f.write(f"- **Providers**: {', '.join(providers)}\n")
+
+            f.write("\n---\n\n")
+
+            # GPT summary
+            if gpt_summary:
+                f.write("## 🤖 GPT Summary\n\n")
+                f.write(f"{gpt_summary}\n")
+
+            # log entries
+            f.write("\n---\n\n")
+            for i, log in enumerate(logs, 1):
+                f.write(f"## Log Entry #{i}\n\n")
+                for key, value in log.items():
+                    f.write(f"- **{key}**: {value}\n")
+                f.write("\n---\n\n")  # divider between entries
+
+        print(f"\n✅ Logs exported successfully to {export_path}")
+    except Exception as e:
+        print(f"❌ Error exporting logs to Markdown: {str(e)}")

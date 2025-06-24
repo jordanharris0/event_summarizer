@@ -8,3 +8,10 @@ __pycache__/
 
 # VS Code
 .vscode/
+
+#file exports
+exports/
+*.csv
+*.json
+*.txt
+*.md
