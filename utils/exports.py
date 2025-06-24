@@ -1,7 +1,45 @@
 import json
 import csv
+import re
+import subprocess
+import os
 from datetime import datetime, timedelta
 from pathlib import Path
+
+
+EXPORT_DIR = 'exports'
+
+
+def ensure_export_dir():
+    if not os.path.exists(EXPORT_DIR):
+        os.makedirs(EXPORT_DIR)
+
+# help function for filename validation
+
+
+def normalize_filename(filename: str, extension: str) -> str:
+    """
+    Normalizes the filename by removing invalid characters and ensuring it has the correct extension.
+
+    Args:
+        filename (str): The original filename.
+        extension (str): The desired file extension (e.g., '.txt', '.json').
+
+    Returns:
+        str: A normalized filename with the correct extension.
+    """
+
+    if not filename.strip():
+        filename = f"logs_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+
+    # remove invalid characters for file names
+    filename = re.sub(r'[<>:"/\\|?*]', '_', filename)
+
+    # ensure correct file extension
+    if not filename.endswith(f'.{extension}'):
+        filename += f'.{extension}'
+
+    return filename
 
 
 # csv file export function
@@ -17,14 +55,10 @@ def export_to_csv(logs: list[dict], filename: str = None):
         print("⚠️ No logs to export.")
         return
 
-    # default filename with timestamp
-    if not filename:
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"logs_{timestamp}.csv"
-
     # creates an export path
-    export_path = Path('exports') / filename
-    export_path.parent.mkdir(parents=True, exist_ok=True)
+    ensure_export_dir()
+    safe_filename = normalize_filename(filename, "csv")
+    export_path = os.path.join(EXPORT_DIR, safe_filename)
 
     # collect all unique fieldnames across all logs
     all_fieldnames = set()
@@ -37,7 +71,9 @@ def export_to_csv(logs: list[dict], filename: str = None):
             writer = csv.DictWriter(f, fieldnames=fieldnames)
             writer.writeheader()
             writer.writerows(logs)
-        print(f"\n✅ Logs exported successfully to {export_path}")
+
+        print(f"\n✅ Export complete. 📁 File saved to: {export_path}")
+        return export_path
     except Exception as e:
         print(f"❌ Error exporting logs to CSV: {str(e)}")
 
@@ -55,19 +91,17 @@ def export_to_json(logs: list[dict], filename: str = None):
         print("⚠️ No logs to export.")
         return
 
-    # default filename with timestamp
-    if not filename:
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"logs_{timestamp}.json"
-
     # creates an export path
-    export_path = Path('exports') / filename
-    export_path.parent.mkdir(parents=True, exist_ok=True)
+    ensure_export_dir()
+    safe_filename = normalize_filename(filename, "json")
+    export_path = os.path.join(EXPORT_DIR, safe_filename)
 
     try:
         with open(export_path, 'w', encoding='utf-8') as f:
             json.dump(logs, f, indent=2, ensure_ascii=False)
-        print(f"\n✅ Logs exported successfully to {export_path}")
+
+        print(f"✅ Export complete. 📁 File saved to: {export_path}")
+        return export_path
     except Exception as e:
         print(f"❌ Error exporting logs to JSON: {str(e)}")
 
@@ -85,14 +119,10 @@ def export_to_txt(logs: list[dict], filename: str = None):
         print("⚠️ No logs to export.")
         return
 
-    # default filename with timestamp
-    if not filename:
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"logs_{timestamp}.txt"
-
     # creates an export path
-    export_path = Path('exports') / filename
-    export_path.parent.mkdir(parents=True, exist_ok=True)
+    ensure_export_dir()
+    safe_filename = normalize_filename(filename, "txt")
+    export_path = os.path.join(EXPORT_DIR, safe_filename)
 
     try:
         with open(export_path, 'w', encoding='utf-8') as f:
@@ -101,7 +131,9 @@ def export_to_txt(logs: list[dict], filename: str = None):
                 for key, value in log.items():
                     f.write(f"{key}: {value}\n")
                 f.write("\n")  # blank line between logs
-        print(f"\n✅ Logs exported successfully to {export_path}")
+
+        print(f"\n✅ Export complete. 📁 File saved to: {export_path}")
+        return export_path
     except Exception as e:
         print(f"❌ Error exporting logs to TXT: {str(e)}")
 
@@ -120,14 +152,10 @@ def export_to_md(logs: list[dict], filename: str = None, gpt_summary: str = None
         print("⚠️ No logs to export.")
         return
 
-    # default filename with timestamp
-    if not filename:
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"logs_{timestamp}.md"
-
     # creates an export path
-    export_path = Path('exports') / filename
-    export_path.parent.mkdir(parents=True, exist_ok=True)
+    ensure_export_dir()
+    safe_filename = normalize_filename(filename, "md")
+    export_path = os.path.join(EXPORT_DIR, safe_filename)
 
     try:
         with open(export_path, 'w', encoding='utf-8') as f:
@@ -164,6 +192,7 @@ def export_to_md(logs: list[dict], filename: str = None, gpt_summary: str = None
                     f.write(f"- **{key}**: {value}\n")
                 f.write("\n---\n\n")  # divider between entries
 
-        print(f"\n✅ Logs exported successfully to {export_path}")
+        print(f"\n✅ Export complete. 📁 File saved to: {export_path}")
+        return export_path
     except Exception as e:
         print(f"❌ Error exporting logs to Markdown: {str(e)}")

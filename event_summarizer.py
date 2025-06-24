@@ -1,4 +1,5 @@
 import time
+import os
 
 # util functions
 from utils.fetch_logs import fetch_event_logs
@@ -58,6 +59,7 @@ def main():
     print("\n" + "=" * 55 + "\n")
 
     # 4. prompt user if they want GPT summarization
+    summarize = None
     while True:
         choice = input(
             "Would you like to summarize these logs with GPT assistance? (yes/no): ").strip().lower()
@@ -109,6 +111,7 @@ def main():
                 'Enter the output filename ending in .txt, .md, .json, .csv (e.g., explained_logs.md): ').strip()
 
             print(f'\nPreparing to save explanations to {output_path}...')
+
             # print a separator for clarity
             print("\n" + "=" * 55 + "\n")
 
@@ -119,33 +122,78 @@ def main():
 
         # export logs to the specified file
         if output_path.endswith('.csv'):
-            print('Exporting logs to CSV...')
+            print(f"\n📁 Exporting logs to {output_path}...\n")
             time.sleep(1)
-            export_to_csv(parsed_logs, filename=output_path)
-            time.sleep(0.5)
-            print(f'\n✅ Event logs saved to {output_path}.')
+            export_path = export_to_csv(parsed_logs, filename=output_path)
+            post_export_menu(export_path, parsed_logs)
 
         elif output_path.endswith('.json'):
-            print('Exporting logs to JSON...')
+            print(f"\n📁 Exporting logs to {output_path}...\n")
             time.sleep(1)
-            export_to_json(parsed_logs, filename=output_path)
-            time.sleep(0.5)
-            print(f'\n✅ Event logs saved to {output_path}.')
+            export_path = export_to_json(parsed_logs, filename=output_path)
+            post_export_menu(export_path, parsed_logs)
 
         elif output_path.endswith('.txt'):
-            print('Exporting logs to TXT...')
+            print(f"\n📁 Exporting logs to {output_path}...\n")
             time.sleep(1)
-            export_to_txt(parsed_logs, filename=output_path)
-            time.sleep(0.5)
-            print(f'\n✅ Event logs saved to {output_path}.')
+            export_path = export_to_txt(parsed_logs, filename=output_path)
+            post_export_menu(export_path, parsed_logs)
 
         elif output_path.endswith('.md'):
-            print('Exporting logs to Markdown...')
+            print(f"\n📁 Exporting logs to {output_path}...\n")
             time.sleep(1)
-            export_to_md(parsed_logs, filename=output_path,
-                         gpt_summary=summarize)
-            time.sleep(0.5)
-            print(f'\n✅ Event logs saved to {output_path}.')
+            export_path = export_to_md(
+                parsed_logs, filename=output_path, gpt_summary=summarize)
+            post_export_menu(export_path, parsed_logs, gpt_summary=summarize)
+
+
+def post_export_menu(export_path, parsed_logs, gpt_summary=None):
+    '''
+    Displays a menu after exporting logs, allowing the user to open the file, export in another
+    format, or return to the main menu.'''
+
+    while True:
+        print("\nWhat would you like to do next?\n")
+        print("    [1] Open file")
+        print("    [2] Export in another format")
+        print("    [3] Search for new logs")
+        print("    [q] Quit the program")
+
+        # print a separator for clarity
+        print("\n" + "=" * 55 + "\n")
+
+        choice = input("Enter your choice: ").strip()
+
+        # print a separator for clarity
+        print("\n" + "=" * 55 + "\n")
+
+        if choice == "1":
+            try:
+                os.startfile(export_path)
+            except Exception as e:
+                print(f"❌ Unable to open file: {e}")
+
+        elif choice == "2":
+            filename = input("\nEnter a new file name: ").strip()
+            if filename.endswith('.csv'):
+                export_path = export_to_csv(parsed_logs, filename)
+            elif filename.endswith('.json'):
+                export_path = export_to_json(parsed_logs, filename)
+            elif filename.endswith('.txt'):
+                export_path = export_to_txt(parsed_logs, filename)
+            elif filename.endswith('.md'):
+                export_path = export_to_md(parsed_logs, filename, gpt_summary)
+            else:
+                print("❌ Invalid extension. Must end with .csv, .json, .txt, or .md")
+
+        elif choice == "3":
+            main()
+        elif choice == "q" or choice == "Q":
+            print("Exiting the program. Goodbye!")
+            exit(0)
+
+        else:
+            print("❌ Invalid choice. Please enter 1, 2, or 3.")
 
 
 if __name__ == "__main__":
