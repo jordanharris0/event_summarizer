@@ -3,6 +3,20 @@ import sys
 import time
 from typing import Optional
 from datetime import datetime, timedelta
+from colorama import init, Fore, Style
+
+# Initialize colorama for colored output
+init(autoreset=True)
+
+# typewriter effect for welcome banner
+
+
+def typewriter_line(text: str, color=Fore.WHITE, style=Style.NORMAL):
+    for char in text:
+        sys.stdout.write(f"{color}{style}{char}{Style.RESET_ALL}")
+        sys.stdout.flush()
+        time.sleep(0.03)
+    print()  # move to next line
 
 # displays welcome message
 
@@ -11,25 +25,19 @@ def display_welcome():
     """
     Display a welcome message with the current date and time.
     """
+
     os.system('cls' if os.name == 'nt' else 'clear')  # clears the console
 
     now = datetime.now().strftime("%B %d, %Y %I:%M %p")
 
-    banner = [
-        "=" * 55,
-        "🔍  Event Log Summarizer".center(55),
-        "Analyze Windows Event Logs with GPT Assistance".center(55),
-        f"{now}".center(55),
-        "=" * 55,
-        "\n\n"
-    ]
-
-    for line in banner:
-        for char in line:
-            sys.stdout.write(char)
-            sys.stdout.flush()
-            time.sleep(0.01)
-        print()  # new line after each line
+    print(Fore.LIGHTWHITE_EX + "=" * 55 + Style.RESET_ALL)
+    typewriter_line("🔍  Event Log Summarizer".center(55),
+                    Fore.GREEN, Style.BRIGHT)
+    typewriter_line("Analyze Windows Event Logs with GPT Assistance".center(
+        55), Fore.CYAN, Style.BRIGHT)
+    typewriter_line(f'{now}'.center(55), Style.BRIGHT + Fore.LIGHTBLUE_EX)
+    print(Fore.LIGHTWHITE_EX + "=" * 55 + Style.RESET_ALL)
+    print("\n")
 
 # prompt user function for log type
 
@@ -53,18 +61,19 @@ def prompt_log_type() -> str:
         "ForwardedEvents"
     ]
 
-    print('\n🗂  Select the type of Windows Event Log to analyze:\n')
+    print(Style.BRIGHT + Fore.LIGHTBLUE_EX +
+          '\n🗂  Select the type of Windows Event Log to analyze:\n')
     # loop through log types
     for i, log in enumerate(log_types, 1):
-        print(f"{i}. {log}")
+        print(Fore.LIGHTWHITE_EX + f"{i}. {log}")
 
     # loop until valid input
     while True:
-        choice = input(
-            '\nEnter the number of your choice: ').strip()
+        choice = input(Fore.LIGHTWHITE_EX +
+                       '\nEnter the number of your choice: ').strip()
 
         # spacing for better readability
-        print("\n" + "=" * 55 + "\n")
+        print(Fore.WHITE + Style.BRIGHT + "\n" + "=" * 55 + "\n")
 
         # log type via number
         if choice.isdigit():
@@ -72,7 +81,8 @@ def prompt_log_type() -> str:
             if 1 <= index <= len(log_types):
                 return log_types[index - 1]
 
-        print("❌ Invalid input. Please enter a number from the list above.")
+        print(Fore.RED + Style.BRIGHT +
+              "❌ Invalid input. Please enter a number from the list above.")
 
 # prompt user function for start time
 
@@ -91,17 +101,21 @@ def prompt_start_time() -> str:
     yesterday = yesterday.replace(hour=0, minute=0, second=0, microsecond=0)
 
     while True:
-        print("\n🕒  Enter the start time for the logs you want to analyze.\n")
-        print("\nExamples:")
-        print(f"  ➤  now        → {datetime.now().strftime(datetime_format)}")
-        print(f"  ➤  today      → {today.strftime(datetime_format)}")
-        print(f"  ➤  yesterday  → {yesterday.strftime(datetime_format)}\n")
+        print(Style.BRIGHT + Fore.LIGHTBLUE_EX +
+              "\n🕒  Enter the start time for the logs you want to analyze.\n")
+        print(Fore.LIGHTWHITE_EX + "\nExamples:")
+        print(
+            f"  {Fore.LIGHTWHITE_EX}➤  {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}now        {Style.RESET_ALL}{Fore.LIGHTWHITE_EX}→ {Style.RESET_ALL}{Fore.CYAN + Style.BRIGHT + datetime.now().strftime(datetime_format)}")
+        print(
+            f"  {Fore.LIGHTWHITE_EX}➤  {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}today      {Style.RESET_ALL}{Fore.LIGHTWHITE_EX}→ {Style.RESET_ALL}{Fore.CYAN + Style.BRIGHT + today.strftime(datetime_format)}")
+        print(
+            f"  {Fore.LIGHTWHITE_EX}➤  {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}yesterday  {Style.RESET_ALL}{Fore.LIGHTWHITE_EX}→ {Style.RESET_ALL}{Fore.CYAN + Style.BRIGHT + yesterday.strftime(datetime_format)}\n")
 
         user_input = input(
-            f"Start time ('{format_hint}') or leave blank for current date and time: ").strip()
+            f"{Fore.LIGHTWHITE_EX}Start time ('{Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT + format_hint}{Style.RESET_ALL}{Fore.LIGHTWHITE_EX}') or leave blank for current date and time: ").strip()
 
         # spacing for better readability
-        print("\n" + "=" * 55 + "\n")
+        print(Fore.LIGHTWHITE_EX + "\n" + "=" * 55 + "\n")
 
         if user_input == 'now' or user_input == '':
             # default to current time
@@ -119,7 +133,8 @@ def prompt_start_time() -> str:
             parsed = datetime.strptime(user_input, datetime_format)
             return parsed.strftime(datetime_format)
         except ValueError:
-            print(f"❌ Invalid format. Type 'help' for examples or try again.")
+            print(Fore.RED + Style.BRIGHT +
+                  f"❌ Invalid format. Try again using the examples or the correct format.")
 
 # prompt user function for end time
 
@@ -136,19 +151,23 @@ def prompt_end_time() -> str:
     yesterday = datetime.now() - timedelta(days=1)
     yesterday = yesterday.replace(hour=0, minute=0, second=0, microsecond=0)
 
-    print("\n🕒  Enter the end time for the logs you want to analyze.\n")
-    print("\nExamples:")
-    print(f"  ➤  now        → {datetime.now().strftime(datetime_format)}")
-    print(f"  ➤  today      → {today.strftime(datetime_format)}")
-    print(f"  ➤  yesterday  → {yesterday.strftime(datetime_format)}\n")
+    print(Style.BRIGHT + Fore.LIGHTBLUE_EX +
+          "\n🕒  Enter the end time for the logs you want to analyze.\n")
+    print(Fore.LIGHTWHITE_EX + "\nExamples:")
+    print(
+        f"  {Fore.LIGHTWHITE_EX}➤  {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}now        {Style.RESET_ALL}{Fore.LIGHTWHITE_EX}→ {Style.RESET_ALL}{Fore.CYAN + Style.BRIGHT + datetime.now().strftime(datetime_format)}")
+    print(
+        f"  {Fore.LIGHTWHITE_EX}➤  {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}today      {Style.RESET_ALL}{Fore.LIGHTWHITE_EX}→ {Style.RESET_ALL}{Fore.CYAN + Style.BRIGHT + today.strftime(datetime_format)}")
+    print(
+        f"  {Fore.LIGHTWHITE_EX}➤  {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}yesterday  {Style.RESET_ALL}{Fore.LIGHTWHITE_EX}→ {Style.RESET_ALL}{Fore.CYAN + Style.BRIGHT + yesterday.strftime(datetime_format)}\n")
 
     while True:
         # Display the prompt for end time
-        user_input = input(
-            f"\n🕒  Enter end time ('{format_hint}') or leave blank for current date and time: ").strip()
+        user_input = input(Fore.LIGHTWHITE_EX +
+                           f"{Fore.LIGHTWHITE_EX}End time ('{Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT + format_hint}{Style.RESET_ALL}{Fore.LIGHTWHITE_EX}') or leave blank for current date and time: ").strip()
 
         # spacing for better readability
-        print("\n" + "=" * 55 + "\n")
+        print(Fore.LIGHTWHITE_EX + "\n" + "=" * 55 + "\n")
 
         if user_input == 'now' or user_input == '':
             # default to current time
@@ -166,7 +185,8 @@ def prompt_end_time() -> str:
             parsed = datetime.strptime(user_input, datetime_format)
             return parsed.strftime(datetime_format)
         except ValueError:
-            print(f"❌ Invalid format. Please use the format: {format_hint}")
+            print(Fore.RED + Style.BRIGHT +
+                  f"❌ Invalid format. Please use the format: {format_hint}")
 
 # prompt user function for max events
 
@@ -182,10 +202,10 @@ def prompt_max_events() -> int:
 
     while True:
         user_input = input(
-            "📄 Max number of events to fetch (press Enter for default 100): ").strip()
+            f"{Fore.LIGHTWHITE_EX}📄 Max number of events to fetch {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}(press Enter for default 100): {Style.RESET_ALL}{Fore.LIGHTWHITE_EX}").strip()
 
         # spacing for better readability
-        print("\n" + "=" * 55 + "\n")
+        print(Fore.LIGHTWHITE_EX + "\n" + "=" * 55 + "\n")
 
         if user_input == '':
             # return default value
@@ -205,7 +225,7 @@ def prompt_max_events() -> int:
                     print('\n')
                     return max_events
                 else:
-                    print("\n🔁 Let's try again.\n")
+                    print(Fore.LIGHTWHITE_EX + "\n🔁 Let's try again.\n")
             else:
                 return max_events
         else:
@@ -227,24 +247,25 @@ def prompt_event_level() -> int:
     5. Verbose
     """
     levels = [
-        "Critical     →  System-critical failures",
-        "Error        →  Application or system errors",
-        "Warning      →  Issues that may not be critical(yet)",
-        "Information  → General information (default)",
-        "Verbose      →  Detailed debug information"
+        f"{Fore.RED + Style.DIM}Critical     {Style.RESET_ALL}{Fore.LIGHTWHITE_EX}→  {Style.RESET_ALL}{Fore.RED + Style.DIM}System-critical failures",
+        f"{Fore.LIGHTRED_EX}Error        {Style.RESET_ALL}{Fore.LIGHTWHITE_EX}→  {Style.RESET_ALL}{Fore.LIGHTRED_EX}Application or system errors",
+        f"{Fore.LIGHTYELLOW_EX + Style.BRIGHT}Warning      {Style.RESET_ALL}{Fore.LIGHTWHITE_EX}→  {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}Issues that may not be critical(yet)",
+        f"{Fore.CYAN + Style.BRIGHT}Information  {Style.RESET_ALL}{Fore.LIGHTWHITE_EX}→  {Style.RESET_ALL}{Fore.CYAN + Style.BRIGHT}General information (default)",
+        f"{Fore.MAGENTA}Verbose      {Style.RESET_ALL}{Fore.LIGHTWHITE_EX}→  {Style.RESET_ALL}{Fore.MAGENTA}Detailed debug information"
     ]
 
-    print("🔎 Choose a log level to filter by (optional):\n")
+    print(
+        f"{Style.BRIGHT + Fore.LIGHTBLUE_EX}🔎 Choose a log level to filter by {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}(optional):\n")
     for i, level in enumerate(levels, 1):
         print(f"    {i}. {level}")
-    print("\n   Leave blank to skip this filter.\n")
+    print(Fore.LIGHTWHITE_EX + "\n   Leave blank to skip this filter.\n")
 
     while True:
-        user_input = input(
-            "🎯 Enter level number (1–5) or press Enter to skip: ").strip()
+        user_input = input(Fore.LIGHTWHITE_EX +
+                           "🎯 Enter level number (1–5) or press Enter to skip: ").strip()
 
         # spacing for better readability
-        print("\n" + "=" * 55 + "\n")
+        print(Fore.LIGHTWHITE_EX + "\n" + "=" * 55 + "\n")
 
         if user_input == '':
             # return default value
@@ -255,9 +276,11 @@ def prompt_event_level() -> int:
             if 1 <= level <= 5:
                 return level
             else:
-                print("❌ Invalid choice. Please enter a number inbetween 1 and 5.")
+                print(Fore.RED + Style.BRIGHT +
+                      "❌ Invalid choice. Please enter a number inbetween 1 and 5.")
         else:
-            print("❌ Invalid input. Please enter a number from the list above.")
+            print(Fore.RED + Style.BRIGHT +
+                  "❌ Invalid input. Please enter a number from the list above.")
 
 # prompt user function for provider name
 
@@ -277,18 +300,19 @@ def prompt_provider_name() -> Optional[str]:
         "Microsoft-Windows-GroupPolicy"
     ]
 
-    print("🏷️  Optionally filter logs by provider name.")
-    print("\n📋 Common Providers:\n")
+    print(Style.BRIGHT + Fore.LIGHTBLUE_EX +
+          "🏷️  Optionally filter logs by provider name.")
+    print(Fore.LIGHTWHITE_EX + "\n📋 Common Providers:\n")
     for i, p in enumerate(common_providers, 1):
-        print(f"    {i}. {p}")
-    print("\n   Leave blank to skip this filter.\n")
+        print(Fore.LIGHTWHITE_EX + f"    {i}. {p}")
+    print(Fore.LIGHTWHITE_EX + "\n   Leave blank to skip this filter.\n")
 
     while True:
-        user_input = input(
-            "🔌 Enter provider name or press enter to skip: ").strip()
+        user_input = input(Fore.LIGHTWHITE_EX +
+                           "🔌 Enter provider name or press Enter to skip: ").strip()
 
         # spacing for better readability
-        print("\n" + "=" * 55 + "\n")
+        print(Fore.LIGHTWHITE_EX + "\n" + "=" * 55 + "\n")
 
         if user_input == '':
             # skips filter
@@ -298,8 +322,8 @@ def prompt_provider_name() -> Optional[str]:
             # valid provider name
             return user_input.strip()
         else:
-            print(
-                "❌ Invalid input. Please enter a valid provider name or leave blank to skip.\n")
+            print(Fore.RED + Style.BRIGHT +
+                  "❌ Invalid input. Please enter a valid provider name or leave blank to skip.\n")
 
 # prompt user function for event IDs
 
@@ -310,17 +334,18 @@ def prompt_event_ids() -> Optional[list[int]]:
     Returns:
         Optional[list[int]]: List of event IDs or None if skipped.
     """
-    print("🎯 Optionally filter by specific event ID(s).\n")
-    print("   Enter one or more event IDs separated by commas.")
-    print("\n     Example: 7001 or 1000,7001,500")
-    print("\n   Leave blank to skip this filter.\n")
+    print(Style.BRIGHT + Fore.LIGHTBLUE_EX +
+          "🎯 Optionally filter by specific event ID(s).\n")
+    print(Fore.LIGHTWHITE_EX + "   Enter one or more event IDs separated by commas.")
+    print(f"\n     {Fore.LIGHTWHITE_EX}Example: {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}7001 {Style.RESET_ALL}{Fore.LIGHTWHITE_EX}or {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}1000,7001,500")
+    print(Fore.LIGHTWHITE_EX + "\n   Leave blank to skip this filter.\n")
 
     while True:
-        user_input = input(
-            "🔢 Enter event ID(s) or press enter to skip: ").strip()
+        user_input = input(Fore.LIGHTWHITE_EX +
+                           "🔢 Enter event ID(s) or press Enter to skip: ").strip()
 
         # spacing for better readability
-        print("\n" + "=" * 55 + "\n")
+        print(Fore.LIGHTWHITE_EX + "\n" + "=" * 55 + "\n")
 
         if user_input == '':
             # skips filter
@@ -334,8 +359,8 @@ def prompt_event_ids() -> Optional[list[int]]:
             if event_ids:
                 return event_ids
             else:
-                print(
-                    "❌ Please enter at least one valid numeric event ID.\n")
+                print(Fore.RED + Style.BRIGHT +
+                      "❌ Please enter at least one valid numeric event ID.\n")
         except ValueError:
-            print(
-                "❌ Invalid format. Please enter numbers separated by commas.\n")
+            print(Fore.RED + Style.BRIGHT +
+                  "❌ Invalid format. Please enter numbers separated by commas.\n")

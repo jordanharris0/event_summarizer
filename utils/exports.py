@@ -1,13 +1,17 @@
 import json
 import csv
 import re
-import subprocess
 import os
-from datetime import datetime, timedelta
-from pathlib import Path
+from datetime import datetime
+from colorama import init, Fore, Style
+
+# Initialize colorama for colored output
+init(autoreset=True)
 
 
 EXPORT_DIR = 'exports'
+
+# creates the export directory if it doesn't exist
 
 
 def ensure_export_dir():
@@ -52,7 +56,7 @@ def export_to_csv(logs: list[dict], filename: str = None):
         filename (str): Optional filename for the CSV file. If None, uses timestamp-based name.
     """
     if not logs:
-        print("⚠️ No logs to export.")
+        print(f"{Fore.LIGHTYELLOW_EX + Style.BRIGHT}⚠️ No logs to export.")
         return
 
     # creates an export path
@@ -72,10 +76,10 @@ def export_to_csv(logs: list[dict], filename: str = None):
             writer.writeheader()
             writer.writerows(logs)
 
-        print(f"\n✅ Export complete. 📁 File saved to: {export_path}")
+        print(f"{Fore.GREEN}✅ Export complete. {Style.RESET_ALL}{Fore.LIGHTWHITE_EX}📁 File saved to: {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}{export_path}")
         return export_path
     except Exception as e:
-        print(f"❌ Error exporting logs to CSV: {str(e)}")
+        print(f"{Fore.RED + Style.BRIGHT}❌ Error exporting logs to CSV: {str(e)}")
 
 
 # json file export function
@@ -88,7 +92,7 @@ def export_to_json(logs: list[dict], filename: str = None):
         filename (str): Optional filename for the JSON file. If None, uses timestamp-based name.
     """
     if not logs:
-        print("⚠️ No logs to export.")
+        print(f"{Fore.LIGHTYELLOW_EX + Style.BRIGHT}⚠️ No logs to export.")
         return
 
     # creates an export path
@@ -100,10 +104,10 @@ def export_to_json(logs: list[dict], filename: str = None):
         with open(export_path, 'w', encoding='utf-8') as f:
             json.dump(logs, f, indent=2, ensure_ascii=False)
 
-        print(f"✅ Export complete. 📁 File saved to: {export_path}")
+        print(f"{Fore.GREEN}✅ Export complete. {Style.RESET_ALL}{Fore.LIGHTWHITE_EX}📁 File saved to: {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}{export_path}")
         return export_path
     except Exception as e:
-        print(f"❌ Error exporting logs to JSON: {str(e)}")
+        print(f"{Fore.RED + Style.BRIGHT}❌ Error exporting logs to JSON: {str(e)}")
 
 
 # txt file export function
@@ -116,7 +120,7 @@ def export_to_txt(logs: list[dict], filename: str = None):
         filename (str): Optional filename for the text file. If None, uses timestamp-based name.
     """
     if not logs:
-        print("⚠️ No logs to export.")
+        print(f"{Fore.LIGHTYELLOW_EX + Style.BRIGHT}⚠️ No logs to export.")
         return
 
     # creates an export path
@@ -132,10 +136,10 @@ def export_to_txt(logs: list[dict], filename: str = None):
                     f.write(f"{key}: {value}\n")
                 f.write("\n")  # blank line between logs
 
-        print(f"\n✅ Export complete. 📁 File saved to: {export_path}")
+        print(f"{Fore.GREEN}✅ Export complete. {Style.RESET_ALL}{Fore.LIGHTWHITE_EX}📁 File saved to: {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}{export_path}")
         return export_path
     except Exception as e:
-        print(f"❌ Error exporting logs to TXT: {str(e)}")
+        print(f"{Fore.RED + Style.BRIGHT}❌ Error exporting logs to TXT: {str(e)}")
 
 
 # .md file export function
@@ -149,7 +153,7 @@ def export_to_md(logs: list[dict], filename: str = None, gpt_summary: str = None
         gpt_summary (str): Optional GPT-generated summary to include.
     """
     if not logs:
-        print("⚠️ No logs to export.")
+        print(f"{Fore.LIGHTYELLOW_EX + Style.BRIGHT}⚠️ No logs to export.")
         return
 
     # creates an export path
@@ -192,7 +196,7 @@ def export_to_md(logs: list[dict], filename: str = None, gpt_summary: str = None
                     f.write(f"- **{key}**: {value}\n")
                 f.write("\n---\n\n")  # divider between entries
 
-        print(f"\n✅ Export complete. 📁 File saved to: {export_path}")
+        print(f"{Fore.GREEN}✅ Export complete. {Style.RESET_ALL}{Fore.LIGHTWHITE_EX}📁 File saved to: {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}{export_path}")
         return export_path
     except Exception as e:
-        print(f"❌ Error exporting logs to Markdown: {str(e)}")
+        print(f"{Fore.RED + Style.BRIGHT}❌ Error exporting logs to Markdown: {str(e)}")

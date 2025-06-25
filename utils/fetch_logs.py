@@ -2,6 +2,11 @@
 import subprocess  # allow running PowerShell commands
 from datetime import datetime  # date formatting
 from typing import Optional
+import time
+from colorama import init, Fore, Style  # colored output for console
+
+# Initialize colorama for colored output
+init(autoreset=True)
 
 
 def fetch_event_logs(log_type: str = "System",
@@ -24,7 +29,8 @@ def fetch_event_logs(log_type: str = "System",
     Returns:
         str: Raw event logs output from PowerShell
     """
-    print("\nFetching logs...\n\n")
+    print(Fore.GREEN + "\nFetching logs...\n\n")
+    time.sleep(1.5)  # pause for a moment to let the user read the message
 
     # building the filter hashtable for PowerShell command
     filter_parts = [f'LogName="{log_type}"']
@@ -49,8 +55,8 @@ def fetch_event_logs(log_type: str = "System",
     # 1 = Critical, 2 = Error, 3 = Warning, 4 = Information, 5 = Verbose
     if level is not None:
         if not (1 <= level <= 5):
-            raise ValueError(
-                'Level must be an integer from 1 (Critical) to 5 (Verbose).')
+            raise ValueError(Fore.RED + Style.BRIGHT +
+                             'Level must be an integer from 1 (Critical) to 5 (Verbose).')
         filter_parts.append(f'Level={level}')
 
     if provider_name:
@@ -83,9 +89,9 @@ def fetch_event_logs(log_type: str = "System",
         )
         output = result.stdout.strip()
         if not output:
-            return f"No logs returned (stdout was empty)."
+            return f"{Fore.RED + Style.BRIGHT}No logs returned (stdout was empty)."
         return output
 
     except subprocess.CalledProcessError:
-        details = f"log_type={log_type}, start_time={start_time}, end_time={end_time}, level={level}, provider_name={provider_name}, event_ids={event_ids}, max_events={max_events}"
-        return f"\nNo logs found matching the specified criteria:\n\n{details}\n\n"
+        details = f"{Fore.LIGHTWHITE_EX}log_type={log_type}, start_time={start_time}, end_time={end_time}, level={level}, provider_name={provider_name}, event_ids={event_ids}, max_events={max_events}"
+        return f"\n{Fore.LIGHTWHITE_EX}No logs found matching the specified criteria:\n\n{details}\n\n"
