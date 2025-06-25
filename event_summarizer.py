@@ -68,6 +68,9 @@ def main():
     # 4. prompt user if they want GPT summarization
     summarize = None
     while True:
+        print(f"{Fore.LIGHTYELLOW_EX + Style.BRIGHT}⚠️  Warning: {Style.RESET_ALL}{Fore.LIGHTWHITE_EX} An API key is required for GPT summarization.\n")
+        print(f'{Fore.LIGHTWHITE_EX}Please navigate to {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}platform.openai.com{Style.RESET_ALL}{Fore.LIGHTWHITE_EX} to create you own API key.\n')
+        print(f'{Fore.LIGHTWHITE_EX}Or if you have one already please create a .env file in the root folder and add: {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}OPENAI_API_KEY=your-api-key-here\n')
         choice = input(
             f"{Fore.LIGHTWHITE_EX}Would you like to summarize these logs with GPT assistance? {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}(yes/no): {Style.RESET_ALL}{Fore.LIGHTWHITE_EX}").strip().lower()
 
@@ -76,7 +79,7 @@ def main():
 
         if choice in ['yes', 'y']:
             # Parse logs
-            print(Fore.GREEN + 'Parsing logs...')
+            print(Fore.GREEN + 'Parsing logs...\n')
             time.sleep(0.5)
             parsed_logs = parse_logs(logs)
 
@@ -117,9 +120,10 @@ def main():
 
                 # get file name from user
                 output_path = input(
-                    'Enter the output filename ending in .txt, .md, .json, .csv (e.g., explained_logs.md): ').strip()
+                    f'{Fore.LIGHTWHITE_EX}Enter the output filename ending in .txt, .md, .json, .csv (e.g., explained_logs.md): ').strip()
 
-                print(f'\nPreparing to save explanations to {output_path}...')
+                print(
+                    f'\n{Fore.LIGHTWHITE_EX}Preparing to save explanations to {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}{output_path}...')
 
                 # print a separator for clarity
                 print(Fore.LIGHTWHITE_EX + "\n" + "=" * 55 + "\n")
@@ -133,28 +137,28 @@ def main():
             # export logs to the specified file
             if output_path.endswith('.csv'):
                 print(
-                    f"\n{Fore.LIGHTWHITE_EX}📁 Exporting logs to {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}{output_path}...\n")
+                    f"\n{Fore.LIGHTWHITE_EX}📁 Exporting logs to {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}{os.path.abspath(output_path)}\n")
                 time.sleep(1)
                 export_path = export_to_csv(parsed_logs, filename=output_path)
                 post_export_menu(export_path, parsed_logs)
 
             elif output_path.endswith('.json'):
                 print(
-                    f"\n{Fore.LIGHTWHITE_EX}📁 Exporting logs to {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}{output_path}...\n")
+                    f"\n{Fore.LIGHTWHITE_EX}📁 Exporting logs to {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}{os.path.abspath(output_path)}\n")
                 time.sleep(1)
                 export_path = export_to_json(parsed_logs, filename=output_path)
                 post_export_menu(export_path, parsed_logs)
 
             elif output_path.endswith('.txt'):
                 print(
-                    f"\n{Fore.LIGHTWHITE_EX}📁 Exporting logs to {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}{output_path}...\n")
+                    f"\n{Fore.LIGHTWHITE_EX}📁 Exporting logs to {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}{os.path.abspath(output_path)}\n")
                 time.sleep(1)
                 export_path = export_to_txt(parsed_logs, filename=output_path)
                 post_export_menu(export_path, parsed_logs)
 
             elif output_path.endswith('.md'):
                 print(
-                    f"\n{Fore.LIGHTWHITE_EX}📁 Exporting logs to {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}{output_path}...\n")
+                    f"\n{Fore.LIGHTWHITE_EX}📁 Exporting logs to {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}{os.path.abspath(output_path)}\n")
                 time.sleep(1)
                 export_path = export_to_md(
                     parsed_logs, filename=output_path, gpt_summary=summarize)
@@ -165,7 +169,7 @@ def main():
 
         elif export in ['no', 'n']:
             print(Fore.LIGHTWHITE_EX +
-                  "ℹ️  Skipping export. Your logs won't be saved to a file. Restarting...\n")
+                  "ℹ️  Skipping export. Your logs won't be saved to a file.\n")
             while True:
                 follow_up = input(
                     f"{Fore.LIGHTWHITE_EX}Would you like to {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}[r]{Style.RESET_ALL}{Fore.LIGHTWHITE_EX}estart or "
@@ -174,7 +178,7 @@ def main():
                 print(Fore.LIGHTWHITE_EX + "\n" + "=" * 55 + "\n")
 
                 if follow_up in ['q', 'quit']:
-                    print(Fore.LIGHTWHITE_EX + "👋 Exiting program. Goodbye!")
+                    print(Fore.LIGHTWHITE_EX + "👋 Exiting program. Goodbye!\n")
                     exit()
 
                 elif follow_up in ['r', 'restart']:
@@ -238,7 +242,7 @@ def post_export_menu(export_path, parsed_logs, gpt_summary=None):
         elif choice == "3":
             main()
         elif choice == "q" or choice == "Q":
-            print(Fore.LIGHTWHITE_EX + "👋 Exiting program. Goodbye!")
+            print(Fore.LIGHTWHITE_EX + "👋 Exiting program. Goodbye!\n")
             exit(0)
 
         else:

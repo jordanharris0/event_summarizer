@@ -30,7 +30,7 @@ def fetch_event_logs(log_type: str = "System",
         str: Raw event logs output from PowerShell
     """
     print(Fore.GREEN + "\nFetching logs...\n\n")
-    time.sleep(1.5)  # pause for a moment to let the user read the message
+    time.sleep(1)  # pause for a moment to let the user read the message
 
     # building the filter hashtable for PowerShell command
     filter_parts = [f'LogName="{log_type}"']

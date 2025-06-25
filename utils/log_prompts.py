@@ -15,7 +15,7 @@ def typewriter_line(text: str, color=Fore.WHITE, style=Style.NORMAL):
     for char in text:
         sys.stdout.write(f"{color}{style}{char}{Style.RESET_ALL}")
         sys.stdout.flush()
-        time.sleep(0.03)
+        time.sleep(0.02)
     print()  # move to next line
 
 # displays welcome message

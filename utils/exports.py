@@ -76,7 +76,7 @@ def export_to_csv(logs: list[dict], filename: str = None):
             writer.writeheader()
             writer.writerows(logs)
 
-        print(f"{Fore.GREEN}✅ Export complete. {Style.RESET_ALL}{Fore.LIGHTWHITE_EX}📁 File saved to: {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}{export_path}")
+        print(f"\n{Fore.GREEN}✅ Export complete. {Style.RESET_ALL}{Fore.LIGHTWHITE_EX}📁 File saved to: {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}{os.path.abspath(export_path)}")
         return export_path
     except Exception as e:
         print(f"{Fore.RED + Style.BRIGHT}❌ Error exporting logs to CSV: {str(e)}")
@@ -104,7 +104,7 @@ def export_to_json(logs: list[dict], filename: str = None):
         with open(export_path, 'w', encoding='utf-8') as f:
             json.dump(logs, f, indent=2, ensure_ascii=False)
 
-        print(f"{Fore.GREEN}✅ Export complete. {Style.RESET_ALL}{Fore.LIGHTWHITE_EX}📁 File saved to: {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}{export_path}")
+        print(f"\n{Fore.GREEN}✅ Export complete. {Style.RESET_ALL}{Fore.LIGHTWHITE_EX}📁 File saved to: {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}{os.path.abspath(export_path)}")
         return export_path
     except Exception as e:
         print(f"{Fore.RED + Style.BRIGHT}❌ Error exporting logs to JSON: {str(e)}")
@@ -136,7 +136,7 @@ def export_to_txt(logs: list[dict], filename: str = None):
                     f.write(f"{key}: {value}\n")
                 f.write("\n")  # blank line between logs
 
-        print(f"{Fore.GREEN}✅ Export complete. {Style.RESET_ALL}{Fore.LIGHTWHITE_EX}📁 File saved to: {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}{export_path}")
+        print(f"\n{Fore.GREEN}✅ Export complete. {Style.RESET_ALL}{Fore.LIGHTWHITE_EX}📁 File saved to: {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}{os.path.abspath(export_path)}")
         return export_path
     except Exception as e:
         print(f"{Fore.RED + Style.BRIGHT}❌ Error exporting logs to TXT: {str(e)}")
@@ -196,7 +196,7 @@ def export_to_md(logs: list[dict], filename: str = None, gpt_summary: str = None
                     f.write(f"- **{key}**: {value}\n")
                 f.write("\n---\n\n")  # divider between entries
 
-        print(f"{Fore.GREEN}✅ Export complete. {Style.RESET_ALL}{Fore.LIGHTWHITE_EX}📁 File saved to: {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}{export_path}")
+        print(f"\n{Fore.GREEN}✅ Export complete. {Style.RESET_ALL}{Fore.LIGHTWHITE_EX}📁 File saved to: {Style.RESET_ALL}{Fore.LIGHTYELLOW_EX + Style.BRIGHT}{os.path.abspath(export_path)}")
         return export_path
     except Exception as e:
         print(f"{Fore.RED + Style.BRIGHT}❌ Error exporting logs to Markdown: {str(e)}")
