@@ -39,10 +39,25 @@ If omitted, the program will prompt you for a key and offer to save it.
 
 ## 🛠 Usage
 
-Cd into the root directory and run the program via PowerShell or terminal:
+## 🖥 Option 1: Run manually
+Cd into the root directory and run the program via PowerShell or terminal.
+
+Example File path in PowerShell:
 ```bash
 PS D:\VSProjects\Python\event_summarizer> python event_summarizer.py
 ```
+
+## ⚡ Option 2: Use the launch.bat file (Windows only)
+Double-click the ```launch.bat``` file in File Explorer to:
+- Open PowerShell
+
+- Activate the virtual enviornment (if present)
+
+- Run the Program
+
+- Pause at the end to view output
+
+---
 
 ## During runtime:
 - Choose a log type
@@ -71,7 +86,7 @@ To use AI summarization:
 
 - Get an API key from [OpenAI](https://platform.openai.com)
 
-- Add it to your .env file OR paste it at runtime
+- Add it to your .env file OR paste it at runtime when prompted
 
 ---
 
