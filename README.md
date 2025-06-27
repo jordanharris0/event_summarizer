@@ -108,3 +108,24 @@ Enter the output filename ending in .txt, .md, .json, .csv: logs.md
 ```
 
 ---
+
+## 📄 3. Files to Add to .gitignore
+```gitignore
+# Ignore virtual environment
+.venv/
+.env
+
+# Python
+__pycache__/
+*.pyc
+
+# VS Code
+.vscode/
+
+#file exports
+exports/
+*.csv
+*.json
+*.txt
+*.md
+```
